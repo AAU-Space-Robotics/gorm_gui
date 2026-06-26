@@ -1,0 +1,20 @@
+--- FIX ---
+
+--- NOW ---
+write the config file and add the ability to change settings
+Hvordan forbinder vi til ROS2 netværket og hvor subcriber vi til de kamera vi skal bruge
+camera feed
+
+
+--- LATER ---
+design of presets for each operator
+
+--- TASKS DONE ---
+ability to change cameras
+multiple camera feeds(test) under one operator
+find ud af hvordan docker virker (kan undgå installering af ubuntu)
+Created GUI script 0.1
+image on e-stop
+ability to switch e-stop on and off
+E-stop doesnt work within operator feeds
+Change the else if statements in the code to switch cases for better streamlining of the code
