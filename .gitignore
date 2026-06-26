@@ -1,1 +1,7 @@
-*/__pycache__
+# Python cache folders
+__pycache__/
+
+# Compiled Python files
+*.pyc
+*.pyo
+*.pyd
