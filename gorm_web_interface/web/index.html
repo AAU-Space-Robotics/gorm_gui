@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROS2 Motor Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #video-stream {
+            background-color: #000;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-4xl p-8 space-y-6 bg-gray-800 rounded-2xl shadow-lg">
+        <div class="text-center">
+            <h1 class="text-3xl font-bold text-white">ROS2 Motor & Video Control</h1>
+            <p class="text-gray-400 mt-2">A web interface to control motors and view video streams in ROS2.</p>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Left Column: Controls -->
+            <div class="space-y-6">
+                <!-- Connection Section -->
+                <div class="space-y-4 bg-gray-700 p-6 rounded-lg">
+                    <h2 class="text-xl font-bold text-white">Connection</h2>
+                    <div>
+                        <label for="rosbridge-ip" class="block text-sm font-medium text-gray-300">ROS2 IP Address</label>
+                        <input type="text" id="rosbridge-ip" value="localhost" class="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button id="connect-button" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-800">
+                        Connect
+                    </button>
+                </div>
+                 <!-- Status Display -->
+                <div id="status" class="text-center p-3 rounded-md bg-gray-700 text-gray-300">
+                    Status: Disconnected
+                </div>
+
+
+                <!-- Motor Control Buttons -->
+                <div class="space-y-4 bg-gray-700 p-6 rounded-lg">
+                    <h2 class="text-xl font-bold text-white">Motor Control</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button id="start-motors-button" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Start Motors
+                        </button>
+                        <button id="shutdown-motors-button" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Shutdown Motors
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Video Stream -->
+            <div class="space-y-4 bg-gray-700 p-6 rounded-lg">
+                <h2 class="text-xl font-bold text-white">Video Stream</h2>
+                <div>
+                    <label for="video-topic" class="block text-sm font-medium text-gray-300">Video Topic</label>
+                    <input type="text" id="video-topic" value="/camera/image_raw/compressed" class="mt-1 block w-full px-4 py-2 bg-gray-600 border border-gray-500 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <button id="stream-button" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800 disabled:opacity-50" disabled>
+                    Start Stream
+                </button>
+                <div class="mt-4">
+                    <img id="video-stream" class="w-full h-auto rounded-md" src="https://placehold.co/640x480/000000/FFFFFF?text=Video+Stream" alt="Video Stream">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const connectButton = document.getElementById('connect-button');
+        const rosbridgeIpInput = document.getElementById('rosbridge-ip');
+        const statusDisplay = document.getElementById('status');
+        const startMotorsButton = document.getElementById('start-motors-button');
+        const shutdownMotorsButton = document.getElementById('shutdown-motors-button');
+        const streamButton = document.getElementById('stream-button');
+        const videoTopicInput = document.getElementById('video-topic');
+        const videoStream = document.getElementById('video-stream');
+
+        let ros = null;
+        let videoSubscriber = null;
+        let isStreaming = false;
+
+        // Set default IP to the hostname where the page is being served from.
+        rosbridgeIpInput.value = window.location.hostname;
+
+        // Function to connect to ROS
+        function connect() {
+            const ip = rosbridgeIpInput.value;
+            ros = new ROSLIB.Ros({
+                url: `ws://${ip}:9090`
+            });
+
+            ros.on('connection', () => {
+                console.log('Connected to websocket server.');
+                statusDisplay.textContent = 'Status: Connected';
+                statusDisplay.classList.remove('bg-red-500', 'bg-gray-700');
+                statusDisplay.classList.add('bg-green-500');
+                startMotorsButton.disabled = false;
+                shutdownMotorsButton.disabled = false;
+                streamButton.disabled = false;
+                connectButton.textContent = 'Disconnect';
+            });
+
+            ros.on('error', (error) => {
+                console.log('Error connecting to websocket server: ', error);
+                statusDisplay.textContent = `Error: Could not connect to ws://${ip}:9090`;
+                statusDisplay.classList.add('bg-red-500');
+                startMotorsButton.disabled = true;
+                shutdownMotorsButton.disabled = true;
+                streamButton.disabled = true;
+            });
+
+            ros.on('close', () => {
+                console.log('Connection to websocket server closed.');
+                statusDisplay.textContent = 'Status: Disconnected';
+                statusDisplay.classList.remove('bg-green-500', 'bg-red-500');
+                statusDisplay.classList.add('bg-gray-700');
+                startMotorsButton.disabled = true;
+                shutdownMotorsButton.disabled = true;
+                streamButton.disabled = true;
+                if (isStreaming) {
+                    toggleStream(); // Stop the stream if connected
+                }
+                connectButton.textContent = 'Connect';
+                ros = null;
+            });
+        }
+
+        // Function to disconnect from ROS
+        function disconnect() {
+            if (ros) {
+                ros.close();
+            }
+        }
+        
+        // Event listener for the connect/disconnect button
+        connectButton.addEventListener('click', () => {
+            if (ros && ros.isConnected) {
+                disconnect();
+            } else {
+                connect();
+            }
+        });
+
+        // --- Motor Control ---
+        function createServiceClient(serviceName) {
+            return new ROSLIB.Service({
+                ros: ros,
+                name: `/${serviceName}`,
+                serviceType: 'std_srvs/srv/Trigger'
+            });
+        }
+        
+        function callService(serviceClient) {
+            const request = new ROSLIB.ServiceRequest({});
+            serviceClient.callService(request, (result) => {
+                console.log('Result for service call on ' + serviceClient.name + ': ' + result.message);
+                statusDisplay.textContent = `Service Response: ${result.message}`;
+                statusDisplay.classList.remove('bg-red-500');
+                statusDisplay.classList.add('bg-green-500');
+            }, (error) => {
+                console.error('Error calling service: ', error);
+                statusDisplay.textContent = `Error: ${error}`;
+                statusDisplay.classList.add('bg-red-500');
+            });
+        }
+
+        startMotorsButton.addEventListener('click', () => {
+            const startMotorsClient = createServiceClient('start_motors');
+            callService(startMotorsClient);
+        });
+
+        shutdownMotorsButton.addEventListener('click', () => {
+            const shutdownMotorsClient = createServiceClient('shutdown_motors');
+            callService(shutdownMotorsClient);
+        });
+
+        // --- Video Stream Control ---
+        function toggleStream() {
+            if (!isStreaming) {
+                // Start the stream
+                const topicName = videoTopicInput.value;
+                if (!topicName) {
+                    alert("Please enter a video topic.");
+                    return;
+                }
+                
+                videoSubscriber = new ROSLIB.Topic({
+                    ros: ros,
+                    name: topicName,
+                    messageType: 'sensor_msgs/msg/CompressedImage'
+                });
+
+                videoSubscriber.subscribe((message) => {
+                    videoStream.src = `data:image/jpeg;base64,${message.data}`;
+                });
+
+                streamButton.textContent = 'Stop Stream';
+                streamButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                streamButton.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                isStreaming = true;
+                console.log(`Subscribed to ${topicName}`);
+
+            } else {
+                // Stop the stream
+                if (videoSubscriber) {
+                    videoSubscriber.unsubscribe();
+                    console.log(`Unsubscribed from ${videoSubscriber.name}`);
+                }
+                videoSubscriber = null;
+                streamButton.textContent = 'Start Stream';
+                streamButton.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                streamButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                isStreaming = false;
+                videoStream.src = "https://placehold.co/640x480/000000/FFFFFF?text=Video+Stream";
+            }
+        }
+
+        streamButton.addEventListener('click', toggleStream);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+
+{
+  "connections": [
+    {
+      "id": "ros2-bridge",
+      "type": "ros2-websocket",
+      "url": "ws://localhost:8765",
+      "enabled": true
+    }
+  ],
+  "configById": {
+    "3D!18i6zy7": {
+      "layers": {
+        "845139cb-26bc-40b3-8161-8ab60af4baf5": {
+          "visible": false,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "845139cb-26bc-40b3-8161-8ab60af4baf5",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [0, 0, 0],
+          "rotation": [0, 0, 0],
+          "order": 1
+        }
+      },
+      "cameraState": {
+        "perspective": true,
+        "distance": 30.14679539052675,
+        "phi": 35.099880272367486,
+        "thetaOffset": -133.65738040591054,
+        "targetOffset": [0.010974010797061177, -0.6569281196140891, 1.0371411226493894e-17],
+        "target": [0, 0, 0],
+        "targetOrientation": [0, 0, 0, 1],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {"transforms": {"showLabel": false}},
+      "transforms": {},
+      "topics": {
+        "/initialpose": {"visible": false},
+        "/map": {"visible": true, "drawBehind": true, "colorMode": "map", "alpha": 0},
+        "/elevation_map": {
+          "visible": true,
+          "drawBehind": true,
+          "interpolationMethod": "nearestNeighbor",
+          "showLines": false,
+          "lineColor": "#000000",
+          "useLighting": true,
+          "elevationLayer": "elevation",
+          "colorLayer": "elevation",
+          "colorGradient": ["#000000", "#ffffff"],
+          "colorMode": "colorMap",
+          "colorMap": "turbo",
+          "explicitAlpha": 1
+        },
+        "/rtabmap/global_path": {"visible": false},
+        "/rtabmap/cloud_map": {"visible": false, "stixelsEnabled": false, "decayTime": 0},
+        "/rtabmap/cloud_ground": {"visible": false},
+        "/global_costmap/published_footprint": {"visible": false, "lineWidth": 1},
+        "/local_costmap/published_footprint": {"visible": true, "lineWidth": 0.05, "color": "#ff0000ff"}
+      },
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {}
+    },
+    "Image!354wqty": {
+      "cameraState": {
+        "distance": 20,
+        "perspective": true,
+        "phi": 60,
+        "target": [0, 0, 0],
+        "targetOffset": [0, 0, 0],
+        "targetOrientation": [0, 0, 0, 1],
+        "thetaOffset": 45,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {},
+      "transforms": {},
+      "topics": {},
+      "layers": {},
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {
+        "imageTopic": "/zed_front/zed/rgb/image_rect_color/compressed"
+      }
+    },
+    "RawMessages!os6rgs": {
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "topicPath": "/cmd_vel",
+      "fontSize": 12
+    },
+    "RosOut!3rwzim3": {
+      "searchTerms": [],
+      "minLogLevel": 3,
+      "nameFilter": {
+        "foxglove_bridge": {"visible": true},
+        "rtabmap.rgbd_odometry": {"visible": true},
+        "rtabmap.rtabmap": {"visible": true},
+        "pointcloud_converter": {"visible": true},
+        "zed_front.zed": {"visible": true},
+        "talker": {"visible": true},
+        "zed_tracking.zed": {"visible": true},
+        "static_transform_publisher_zed_base_c": {"visible": true},
+        "twist_mux": {"visible": true},
+        "zed_front.zed_container": {"visible": true},
+        "static_transform_publisher_zed_base_b": {"visible": true},
+        "rosbridge_websocket": {"visible": true},
+        "joy_node": {"visible": true},
+        "remote_joy_to_cmd_vel_node": {"visible": true},
+        "zed_tracking.zed_state_publisher": {"visible": true},
+        "zed_front.zed_state_publisher": {"visible": true},
+        "ackermann_nav2": {"visible": true},
+        "static_transform_publisher_zed_base_f": {"visible": true},
+        "zed_tracking.zed_container": {"visible": true},
+        "web_server_node": {"visible": true},
+        "motor_driver_node": {"visible": true},
+        "rtabmap.republish_depth": {"visible": true},
+        "map_republisher": {"visible": true}
+      },
+      "foxglovePanelTitle": "Log stuff"
+    },
+    "Teleop!3mmf5l0": {
+      "topic": "/cmd_vel",
+      "publishRate": 1,
+      "upButton": {"field": "linear-x", "value": 1.2},
+      "downButton": {"field": "linear-x", "value": -1.2},
+      "leftButton": {"field": "angular-z", "value": 0.25},
+      "rightButton": {"field": "angular-z", "value": -0.25}
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {"speed": 1},
+  "drawerConfig": {"tracks": []},
+  "layout": {
+    "direction": "row",
+    "first": "3D!18i6zy7",
+    "second": {
+      "direction": "row",
+      "first": {
+        "first": "Image!354wqty",
+        "second": "RawMessages!os6rgs",
+        "direction": "column"
+      },
+      "second": {
+        "first": "RosOut!3rwzim3",
+        "second": "Teleop!3mmf5l0",
+        "direction": "column"
+      },
+      "splitPercentage": 51.73703901656869
+    },
+    "splitPercentage": 40.06716817569833
+  }
+}
