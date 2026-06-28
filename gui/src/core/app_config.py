@@ -19,8 +19,8 @@ class WindowConfig:
 @dataclass
 class LayoutConfig:
     # Old ratio-based layout fields (kept temporarily for compatibility)
-    left_width_ratio: float = 0.75
-    right_width_ratio: float = 0.25
+    left_width_ratio: float = 0.80
+    right_width_ratio: float = 0.20
     estop_height_ratio: float = 0.30
     settings_height_ratio: float = 0.20
     telemetry_height_ratio: float = 0.30

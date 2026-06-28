@@ -23,31 +23,37 @@ def draw_panel_by_name(name, state):
 
 def draw_layout(state):
     width, height = imgui.get_io().display_size
+    cfg = state.config.layout
+    panels_cfg = cfg.panels
 
-    panels_cfg = state.config.layout.panels
+    col0_width = width * cfg.left_width_ratio
+    col1_width = width - col0_width
 
-    cols = 2
-    col_width = width / cols
+    column_widths = {
+        0: col0_width,
+        1: col1_width,
+    }
 
-    # group panels by column
+    column_x = {
+        0: 0,
+        1: col0_width,
+    }
+
     columns = {0: [], 1: []}
 
     for name, pos in panels_cfg.items():
-        # if either is None -> disabled
         if pos["col"] is None or pos["row"] is None:
             continue
 
-        col = max(0, min(cols - 1, pos["col"]))
+        col = max(0, min(1, pos["col"]))
         row = max(0, pos["row"])
 
         columns[col].append((row, name))
 
-    # sort each column by row (sequence only)
     for col in columns:
         columns[col].sort(key=lambda x: x[0])
 
-    # draw panels stacked inside each column
-    for col in range(cols):
+    for col in range(2):
         col_panels = columns[col]
 
         if not col_panels:
@@ -57,11 +63,11 @@ def draw_layout(state):
         panel_height = height / panel_count
 
         for i, (_, name) in enumerate(col_panels):
-            x = col * col_width
+            x = column_x[col]
             y = i * panel_height
 
             imgui.set_next_window_position(x, y)
-            imgui.set_next_window_size(col_width, panel_height)
+            imgui.set_next_window_size(column_widths[col], panel_height)
 
             draw_panel_by_name(name, state)
 

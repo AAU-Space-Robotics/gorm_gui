@@ -80,20 +80,27 @@ def draw_settings_popup(state):
 
     imgui.separator()
     imgui.text("Panel Placement")
+    changed, cfg.layout.left_width_ratio = imgui.slider_float(
+        "Column 0 Width", cfg.layout.left_width_ratio, 0.0, 1.0
+    )
+    cfg.layout.left_width_ratio = max(0.0, min(1.0, cfg.layout.left_width_ratio))
+    cfg.layout.right_width_ratio = 1.0 - cfg.layout.left_width_ratio
     imgui.text("Column decides the column. Row decides the order inside that column.")
     imgui.text("Selecting 'none' disables the panel.")
 
     column_options = ["none", "0", "1"]
     row_options = ["none", "0", "1", "2", "3"]
 
-    def combo_from_options(label, current_value, options):
+    def combo_from_options(label, current_value, options, width=100):
         current_text = "none" if current_value is None else str(current_value)
 
         if current_text not in options:
             current_text = "none"
 
         current_index = options.index(current_text)
+        imgui.push_item_width(width)
         changed, new_index = imgui.combo(label, current_index, options)
+        imgui.pop_item_width()
 
         if changed:
             selected = options[new_index]
