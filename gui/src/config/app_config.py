@@ -2,12 +2,12 @@ from dataclasses import dataclass, field
 
 @dataclass
 class KeybindsConfig:
-    camera_1_1: str = "1"
-    camera_1_2: str = "2"
-    camera_1_3: str = "3"
-    camera_2_1: str = "4"
-    camera_2_2: str = "5"
-    camera_2_3: str = "6"
+    camera_1_1: str = "F1"
+    camera_1_2: str = "F2"
+    camera_1_3: str = "F3"
+    camera_2_1: str = "1"
+    camera_2_2: str = "2"
+    camera_2_3: str = "3"
     shutdown_popup: str = "ESCAPE"
     estop: str = "SPACE"
     unlock_estop: str = "E"

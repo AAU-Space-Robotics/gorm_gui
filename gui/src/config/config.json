@@ -22,8 +22,8 @@
                 "col": 0
             },
             "estop": {
-                "row": 0,
-                "col": null
+                "row": null,
+                "col": 1
             },
             "settings": {
                 "row": 1,
@@ -50,18 +50,18 @@
                 "height": 720
             },
             "camera_2": {
-                "width": 640,
-                "height": 480
+                "width": 1280,
+                "height": 720
             }
         }
     },
     "keybinds": {
-        "camera_1_1": "1",
-        "camera_1_2": "2",
-        "camera_1_3": "3",
-        "camera_2_1": "4",
-        "camera_2_2": "5",
-        "camera_2_3": "6",
+        "camera_1_1": "F1",
+        "camera_1_2": "F2",
+        "camera_1_3": "F3",
+        "camera_2_1": "1",
+        "camera_2_2": "2",
+        "camera_2_3": "3",
         "shutdown_popup": "ESCAPE",
         "estop": "SPACE",
         "unlock_estop": "E"

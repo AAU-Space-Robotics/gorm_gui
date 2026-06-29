@@ -1,4 +1,5 @@
 import glfw
+import imgui
 
 def is_key_pressed_once(window, key, state):
     current = glfw.get_key(window, key) == glfw.PRESS
@@ -19,17 +20,18 @@ def handle_keybinds(window, state):
     if state.shutdown_popup_open:
         if is_key_pressed_once(window, glfw.KEY_1, state):
             state.shutdown_popup_choice = "yes"
-
         if is_key_pressed_once(window, glfw.KEY_2, state):
             state.shutdown_popup_choice = "no"
-
         if is_key_pressed_once(window, glfw.KEY_3, state):
-            state.request_settings_popup = True
-
-        # ESC while popup is open = cancel
+            state.shutdown_popup_choice = "settings"
         if is_key_pressed_once(window, glfw.KEY_ESCAPE, state):
             state.shutdown_popup_choice = "no"
+        return
 
+   
+    if state.settings_popup_open:
+        if is_key_pressed_once(window, glfw.KEY_ESCAPE, state):
+            imgui.close_current_popup()
         return
 
     key_1 = get_key_code(state.config.keybinds.camera_1_1)
