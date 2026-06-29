@@ -7,24 +7,15 @@ class RoverState:
         # E-stop runtime state
         self.emergency_pressed = False
 
-        # Camera_1 runtime state
-        self.camera_texture_1 = None
-        self.camera_width_1 = 0
-        self.camera_height_1 = 0
-        self.camera_channels_1 = 3
-        self.active_camera_1 = None
+        #camera sources
         self.requested_camera_1 = 0
-        self.camera_status_1 = "Not initialized"
-        
-        # Camera_2 runtime state
-        self.camera_texture_2 = None
-        self.camera_width_2 = 0
-        self.camera_height_2 = 0
-        self.camera_channels_2 = 3
-        self.active_camera_2 = None
         self.requested_camera_2 = 1
-        self.camera_status_2 = "Not initialized"
 
+        self.camera_sources = {
+            0: {"texture": None, "width": 0, "height": 0, "channels": 3, "status": "Not initialized"},
+            1: {"texture": None, "width": 0, "height": 0, "channels": 3, "status": "Not initialized"},
+            2: {"texture": None, "width": 0, "height": 0, "channels": 3, "status": "Not initialized"},
+        }
         # App runtime state
         self.command = None
         self.should_shutdown = False

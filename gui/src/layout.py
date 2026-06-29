@@ -11,7 +11,7 @@ from config.settings_manager import draw_settings_popup
 def draw_panel_by_name(name, state):
     if name == "camera_1":
         draw_camera_panel(state, 1)
-    if name == "camera_2":
+    elif name == "camera_2":
         draw_camera_panel(state, 2)
     elif name == "estop":
         draw_estop_panel(state)
@@ -21,6 +21,7 @@ def draw_panel_by_name(name, state):
         draw_telemetry_panel(state)
     elif name == "rover_icon":
         draw_rover_icon_panel(state)
+
 
 
 def draw_layout(state):

@@ -18,6 +18,10 @@ def draw_shutdown_popup(state):
         imgui.same_line()
 
         no_clicked = imgui.button("No [2]", 100, 35) or state.shutdown_popup_choice == "no"
+        
+        imgui.same_line()
+
+        settings_clicked = imgui.button("Settings [3]", 100, 35) 
 
         if yes_clicked:
             state.should_shutdown = True
@@ -26,6 +30,12 @@ def draw_shutdown_popup(state):
             imgui.close_current_popup()
 
         elif no_clicked:
+            state.shutdown_popup_choice = None
+            state.shutdown_popup_open = False
+            imgui.close_current_popup()
+        
+        elif settings_clicked:
+            state.request_settings_popup = True
             state.shutdown_popup_choice = None
             state.shutdown_popup_open = False
             imgui.close_current_popup()

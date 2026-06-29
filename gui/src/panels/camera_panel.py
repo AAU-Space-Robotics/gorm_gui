@@ -1,21 +1,27 @@
 import imgui
 
-def draw_camera_panel(state, camera_id):
+def draw_camera_panel(state, panel_id):
     imgui.begin(
-        f"Camera {camera_id}",
+        f"Camera {panel_id}",
         flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE
     )
 
-    if camera_id == 1:
-        texture = state.camera_texture_1
-        width = state.camera_width_1
-        height = state.camera_height_1
-        status = state.camera_status_1
+    if panel_id == 1:
+        source_index = state.requested_camera_1
     else:
-        texture = state.camera_texture_2
-        width = state.camera_width_2
-        height = state.camera_height_2
-        status = state.camera_status_2
+        source_index = state.requested_camera_2
+
+    source = state.camera_sources.get(source_index)
+
+    if source is None:
+        imgui.text("No source available")
+        imgui.end()
+        return
+
+    texture = source["texture"]
+    width = source["width"]
+    height = source["height"]
+    status = source["status"]
 
     if texture is None or width == 0 or height == 0:
         imgui.text(status if status else "No camera feed")
