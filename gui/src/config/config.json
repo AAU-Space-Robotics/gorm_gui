@@ -18,7 +18,7 @@
                 "col": 0
             },
             "camera_2": {
-                "row": 1,
+                "row": null,
                 "col": 0
             },
             "estop": {
@@ -42,7 +42,7 @@
     "camera": {
         "assignments": {
             "camera_1": 0,
-            "camera_2": 0
+            "camera_2": 1
         },
         "resolutions": {
             "camera_1": {

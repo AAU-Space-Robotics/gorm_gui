@@ -2,6 +2,7 @@ import imgui
 
 def draw_settings_panel(state):
     imgui.begin("Settings")
+    imgui.text("")
     if imgui.button("Shut Down GUI"):
         state.request_shutdown_popup = True
     imgui.same_line()
@@ -30,7 +31,6 @@ def draw_settings_panel(state):
 
     imgui.text(f"Requested Panel 1: {state.requested_camera_1}")
     imgui.text("")
-    imgui.separator()
     imgui.text("Panel 2 Selection")
 
     if imgui.button("Panel 2 front"):

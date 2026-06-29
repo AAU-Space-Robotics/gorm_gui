@@ -150,16 +150,11 @@ def main():
         str(BASE_DIR / "assets" / "estop_unpressed.png")
     )
 
-    # Rover icon textures
-    state.front_cam_icon_tex, state.front_cam_icon_w, state.front_cam_icon_h = load_texture_cv(
-        str(BASE_DIR / "assets" / "front_cam.png")
+    # Rover icon texture
+    state.rover_base_icon_tex, state.rover_base_icon_w, state.rover_base_icon_h = load_texture_cv(
+    str(BASE_DIR / "assets" / "Base_icon_with_cams.png")
     )
-    state.back_cam_icon_tex, state.back_cam_icon_w, state.back_cam_icon_h = load_texture_cv(
-        str(BASE_DIR / "assets" / "back_cam.png")
-    )
-    state.manipulator_cam_icon_tex, state.manipulator_cam_icon_w, state.manipulator_cam_icon_h = load_texture_cv(
-        str(BASE_DIR / "assets" / "manipulator_cam.png")
-    )
+
 
     camera_caps = {0: None, 1: None, 2: None}
 
