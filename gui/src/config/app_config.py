@@ -18,7 +18,7 @@ class WindowConfig:
 
 @dataclass
 class SettingsmenuConfig:
-    button_width:int = 100,
+    button_width:int = 150
     dropdown_width:int = 100
 
 @dataclass

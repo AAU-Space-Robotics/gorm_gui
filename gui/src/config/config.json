@@ -19,7 +19,7 @@
             },
             "estop": {
                 "row": 0,
-                "col": 1
+                "col": null
             },
             "settings": {
                 "row": 1,
