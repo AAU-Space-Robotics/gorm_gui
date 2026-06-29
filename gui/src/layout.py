@@ -1,6 +1,6 @@
 import imgui
 
-from panels.camera_panel import draw_camera_panel
+from panels.feed_panel import draw_camera_panel
 from panels.settings_panel import draw_settings_panel
 from panels.telemetry_panel import draw_telemetry_panel
 from panels.rover_icon_panel import draw_rover_icon_panel

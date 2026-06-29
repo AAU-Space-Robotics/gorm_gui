@@ -72,6 +72,7 @@ def draw_settings_popup(state):
     state.settings_popup_open = opened
 
     if not opened:
+        state.settings_popup_choice = None
         return
 
     cfg = state.edit_config
@@ -163,32 +164,44 @@ def draw_settings_popup(state):
     imgui.separator()
     imgui.text("Keybinds")
     changed, cfg.keybinds.camera_1_1 = imgui.input_text("Camera 1 feed 1 Key", cfg.keybinds.camera_1_1, 16)
-    changed, cfg.keybinds.camera_1_2 = imgui.input_text("Camera 1 feed 2 Key", cfg.keybinds.camera_1_2, 16)
-    changed, cfg.keybinds.camera_1_3 = imgui.input_text("Camera 1 feed 3 Key", cfg.keybinds.camera_1_3, 16)
+    imgui.same_line()
     changed, cfg.keybinds.camera_2_1 = imgui.input_text("Camera 2 feed 1 Key", cfg.keybinds.camera_2_1, 16)
+    changed, cfg.keybinds.camera_1_2 = imgui.input_text("Camera 1 feed 2 Key", cfg.keybinds.camera_1_2, 16)
+    imgui.same_line()
     changed, cfg.keybinds.camera_2_2 = imgui.input_text("Camera 2 feed 2 Key", cfg.keybinds.camera_2_2, 16)
+    changed, cfg.keybinds.camera_1_3 = imgui.input_text("Camera 1 feed 3 Key", cfg.keybinds.camera_1_3, 16)
+    imgui.same_line()
     changed, cfg.keybinds.camera_2_3 = imgui.input_text("Camera 2 feed 3 Key", cfg.keybinds.camera_2_3, 16)
     changed, cfg.keybinds.shutdown_popup = imgui.input_text("Shutdown Popup Key", cfg.keybinds.shutdown_popup, 16)
     changed, cfg.keybinds.estop = imgui.input_text("E-stop Key", cfg.keybinds.estop, 16)
     imgui.pop_item_width()
     imgui.separator()
 
-    if imgui.button("Apply", 140, 40):
+    apply_clicked = imgui.button("Apply [Enter]", 140, 40) or state.settings_popup_choice == "apply"
+
+    imgui.same_line()
+
+    reset_clicked = imgui.button("Reset to Defaults", 180, 40)
+
+    imgui.same_line()
+
+    close_clicked = imgui.button("Close [Esc]", 140, 40) or state.settings_popup_choice == "close"
+
+    if apply_clicked:
         state.config = copy.deepcopy(state.edit_config)
         save_config(state.config)
         state.request_apply_settings = True
         state.pending_camera_reconfigure = True
         state.pending_window_resize = True
+        state.settings_popup_choice = None
 
-    imgui.same_line()
-
-    if imgui.button("Reset to Defaults", 180, 40):
+    elif reset_clicked:
         state.edit_config = reset_config_defaults()
 
-    imgui.same_line()
-
-    if imgui.button("Close", 140, 40):
+    elif close_clicked:
         state.edit_config = copy.deepcopy(state.config)
+        state.settings_popup_choice = None
         imgui.close_current_popup()
+
 
     imgui.end_popup()

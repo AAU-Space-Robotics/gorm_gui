@@ -2,7 +2,7 @@ import imgui
 
 def draw_camera_panel(state, panel_id):
     imgui.begin(
-        f"Camera {panel_id}",
+        f"Panel {panel_id}",
         flags=imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE
     )
 

@@ -28,6 +28,7 @@ class RoverState:
         self.config = None
         self.edit_config = None
         self.request_settings_popup = False
+        self.settings_popup_choice = None
         self.settings_popup_open = False
         self.request_apply_settings = False
         self.pending_camera_reconfigure = False

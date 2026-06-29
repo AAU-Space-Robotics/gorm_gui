@@ -30,9 +30,14 @@ def handle_keybinds(window, state):
 
    
     if state.settings_popup_open:
+        if is_key_pressed_once(window, glfw.KEY_ENTER, state):
+            state.settings_popup_choice = "apply"
+
         if is_key_pressed_once(window, glfw.KEY_ESCAPE, state):
-            imgui.close_current_popup()
+            state.settings_popup_choice = "close"
+
         return
+
 
     key_1 = get_key_code(state.config.keybinds.camera_1_1)
     key_2 = get_key_code(state.config.keybinds.camera_1_2)
