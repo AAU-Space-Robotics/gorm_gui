@@ -3,6 +3,8 @@
 --- NOW ---
 Hvordan forbinder vi til ROS2 netværket og hvor subcriber vi til de kamera vi skal bruge
 camera feed
+row height for specifikke panels
+trække i panels så de bliver breddere eller højere
 
 
 --- LATER ---
