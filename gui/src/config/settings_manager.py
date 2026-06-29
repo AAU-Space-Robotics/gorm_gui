@@ -36,6 +36,7 @@ def save_config(config: AppConfig) -> None:
         "layout": vars(config.layout),
         "camera": vars(config.camera),
         "keybinds": vars(config.keybinds),
+        "settingsmenu": vars(config.settingsmenu)
     }
 
     CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -133,19 +134,43 @@ def draw_settings_popup(state):
     imgui.separator()
     imgui.text("Camera")
     imgui.push_item_width(cfg.settingsmenu.button_width)
-    changed, cfg.camera.default_camera = imgui.input_int("Default Camera", cfg.camera.default_camera)
-    changed, cfg.camera.width = imgui.input_int("Camera Width", cfg.camera.width)
-    changed, cfg.camera.height = imgui.input_int("Camera Height", cfg.camera.height)
 
+    changed, cfg.camera.assignments["camera_1"] = imgui.input_int(
+        "Camera 1 Source", cfg.camera.assignments["camera_1"]
+    )
+    imgui.same_line()
+    changed, cfg.camera.resolutions["camera_1"]["width"] = imgui.input_int(
+        "Camera 1 Width", cfg.camera.resolutions["camera_1"]["width"]
+    )
+    imgui.same_line()
+    changed, cfg.camera.resolutions["camera_1"]["height"] = imgui.input_int(
+        "Camera 1 Height", cfg.camera.resolutions["camera_1"]["height"]
+    )
+
+    changed, cfg.camera.assignments["camera_2"] = imgui.input_int(
+        "Camera 2 Source", cfg.camera.assignments["camera_2"]
+    )
+    imgui.same_line()
+    changed, cfg.camera.resolutions["camera_2"]["width"] = imgui.input_int(
+        "Camera 2 Width", cfg.camera.resolutions["camera_2"]["width"]
+    )
+    imgui.same_line()
+    changed, cfg.camera.resolutions["camera_2"]["height"] = imgui.input_int(
+        "Camera 2 Height", cfg.camera.resolutions["camera_2"]["height"]
+    )
+
+    
     imgui.separator()
     imgui.text("Keybinds")
-    changed, cfg.keybinds.camera_1 = imgui.input_text("Camera 1 Key", cfg.keybinds.camera_1, 16)
-    changed, cfg.keybinds.camera_2 = imgui.input_text("Camera 2 Key", cfg.keybinds.camera_2, 16)
-    changed, cfg.keybinds.camera_3 = imgui.input_text("Camera 3 Key", cfg.keybinds.camera_3, 16)
+    changed, cfg.keybinds.camera_1_1 = imgui.input_text("Camera 1 feed 1 Key", cfg.keybinds.camera_1_1, 16)
+    changed, cfg.keybinds.camera_1_2 = imgui.input_text("Camera 1 feed 2 Key", cfg.keybinds.camera_1_2, 16)
+    changed, cfg.keybinds.camera_1_3 = imgui.input_text("Camera 1 feed 3 Key", cfg.keybinds.camera_1_3, 16)
+    changed, cfg.keybinds.camera_2_1 = imgui.input_text("Camera 2 feed 1 Key", cfg.keybinds.camera_2_1, 16)
+    changed, cfg.keybinds.camera_2_2 = imgui.input_text("Camera 2 feed 2 Key", cfg.keybinds.camera_2_2, 16)
+    changed, cfg.keybinds.camera_2_3 = imgui.input_text("Camera 2 feed 3 Key", cfg.keybinds.camera_2_3, 16)
     changed, cfg.keybinds.shutdown_popup = imgui.input_text("Shutdown Popup Key", cfg.keybinds.shutdown_popup, 16)
     changed, cfg.keybinds.estop = imgui.input_text("E-stop Key", cfg.keybinds.estop, 16)
     imgui.pop_item_width()
-
     imgui.separator()
 
     if imgui.button("Apply", 140, 40):

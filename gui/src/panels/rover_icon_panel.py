@@ -7,7 +7,7 @@ def draw_rover_icon_panel(state):
     )
 
     # Use requested_camera so the icon changes with the selected button
-    cam = state.requested_camera
+    cam = state.requested_camera_1
 
     if cam == 0:
         tex = state.front_cam_icon_tex

@@ -9,8 +9,10 @@ from panels.shutdown_popup import draw_shutdown_popup
 from config.settings_manager import draw_settings_popup
 
 def draw_panel_by_name(name, state):
-    if name == "camera":
-        draw_camera_panel(state)
+    if name == "camera_1":
+        draw_camera_panel(state, 1)
+    if name == "camera_2":
+        draw_camera_panel(state, 2)
     elif name == "estop":
         draw_estop_panel(state)
     elif name == "settings":

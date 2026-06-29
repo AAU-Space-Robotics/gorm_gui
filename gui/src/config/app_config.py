@@ -2,9 +2,12 @@ from dataclasses import dataclass, field
 
 @dataclass
 class KeybindsConfig:
-    camera_1: str = "1"
-    camera_2: str = "2"
-    camera_3: str = "3"
+    camera_1_1: str = "1"
+    camera_1_2: str = "2"
+    camera_1_3: str = "3"
+    camera_2_1: str = "4"
+    camera_2_2: str = "5"
+    camera_2_3: str = "6"
     shutdown_popup: str = "ESCAPE"
     estop: str = "SPACE"
     unlock_estop: str = "E"
@@ -33,7 +36,8 @@ class LayoutConfig:
 
     # New grid-based layout
     panels: dict = field(default_factory=lambda: {
-        "camera": {"row": 0, "col": 0},
+        "camera_1": {"row": 0, "col": 0},
+        "camera_2": {"row": 1, "col": 0},
         "estop": {"row": None, "col": 1},
         "settings": {"row": 1, "col": 1},
         "telemetry": {"row": 2, "col": 1},
@@ -42,9 +46,14 @@ class LayoutConfig:
 
 @dataclass
 class CameraConfig:
-    default_camera: int = 0
-    width: int = 1280
-    height: int = 720
+    assignments: dict = field(default_factory=lambda: {
+        "camera_1": 0,
+        "camera_2": 1,
+    })
+    resolutions: dict = field(default_factory=lambda: {
+        "camera_1": {"width": 1280, "height": 720},
+        "camera_2": {"width": 1280, "height": 720},
+    })
 
 
 @dataclass

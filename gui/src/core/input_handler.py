@@ -29,21 +29,33 @@ def handle_keybinds(window, state):
 
         return
 
-    key_1 = get_key_code(state.config.keybinds.camera_1)
-    key_2 = get_key_code(state.config.keybinds.camera_2)
-    key_3 = get_key_code(state.config.keybinds.camera_3)
+    key_1 = get_key_code(state.config.keybinds.camera_1_1)
+    key_2 = get_key_code(state.config.keybinds.camera_1_2)
+    key_3 = get_key_code(state.config.keybinds.camera_1_3)
+    key_4 = get_key_code(state.config.keybinds.camera_2_1)
+    key_5 = get_key_code(state.config.keybinds.camera_2_2)
+    key_6 = get_key_code(state.config.keybinds.camera_2_3)
     key_unlock_estop = get_key_code(state.config.keybinds.unlock_estop)
     key_estop = get_key_code(state.config.keybinds.estop)
 
     # Camera selection
     if key_1 and is_key_pressed_once(window, key_1, state):
-        state.requested_camera = 0
+        state.requested_camera_1 = 0
 
     if key_2 and is_key_pressed_once(window, key_2, state):
-        state.requested_camera = 1
+        state.requested_camera_1 = 1
 
     if key_3 and is_key_pressed_once(window, key_3, state):
-        state.requested_camera = 2
+        state.requested_camera_1 = 2
+
+    if key_4 and is_key_pressed_once(window, key_3, state):
+        state.requested_camera_2 = 0
+
+    if key_5 and is_key_pressed_once(window, key_3, state):
+        state.requested_camera_2 = 1
+
+    if key_6 and is_key_pressed_once(window, key_3, state):
+        state.requested_camera_2 = 2
 
     if key_estop and is_key_pressed_once(window, key_estop, state):
         state.emergency_pressed = True

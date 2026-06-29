@@ -13,8 +13,12 @@
         "telemetry_height_ratio": 0.3,
         "rover_icon_height_ratio": 0.2,
         "panels": {
-            "camera": {
-                "row": 2,
+            "camera_1": {
+                "row": 0,
+                "col": 0
+            },
+            "camera_2": {
+                "row": 1,
                 "col": 0
             },
             "estop": {
@@ -36,16 +40,34 @@
         }
     },
     "camera": {
-        "default_camera": 0,
-        "width": 1280,
-        "height": 720
+        "assignments": {
+            "camera_1": 0,
+            "camera_2": 0
+        },
+        "resolutions": {
+            "camera_1": {
+                "width": 1280,
+                "height": 720
+            },
+            "camera_2": {
+                "width": 640,
+                "height": 480
+            }
+        }
     },
     "keybinds": {
-        "camera_1": "1",
-        "camera_2": "2",
-        "camera_3": "3",
+        "camera_1_1": "1",
+        "camera_1_2": "2",
+        "camera_1_3": "3",
+        "camera_2_1": "4",
+        "camera_2_2": "5",
+        "camera_2_3": "6",
         "shutdown_popup": "ESCAPE",
         "estop": "SPACE",
         "unlock_estop": "E"
+    },
+    "settingsmenu": {
+        "button_width": 150,
+        "dropdown_width": 100
     }
 }

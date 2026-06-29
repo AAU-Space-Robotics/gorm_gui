@@ -34,58 +34,83 @@ def clear_camera_state(state, camera_index=None, status="Camera not found"):
         state.active_camera = camera_index
 
 
-def open_camera(camera_index, state):
-    # On Windows, CAP_DSHOW often avoids noisy backend probing
+def open_camera_1(camera_index, state):
     cap = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
     if not cap.isOpened():
-        # Try again with default backend if DSHOW fails
         cap = cv2.VideoCapture(camera_index)
-
     if not cap.isOpened():
-        clear_camera_state(
-            state,
-            camera_index=camera_index,
-            status=f"Camera {camera_index} not found"
-        )
+        state.camera_texture_1 = None
+        state.camera_width_1 = 0
+        state.camera_height_1 = 0
+        state.camera_status_1 = f"Camera {camera_index} not found"
+        state.active_camera_1 = camera_index
         return None
-
+    
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, state.config.camera.resolutions["camera_2"]["width"])
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, state.config.camera.resolutions["camera_2"]["height"])
     ret, frame = cap.read()
     if not ret or frame is None:
         cap.release()
-        clear_camera_state(
-            state,
-            camera_index=camera_index,
-            status=f"Camera {camera_index} not found"
-        )
+        state.camera_texture_1 = None
+        state.camera_width_1 = 0
+        state.camera_height_1 = 0
+        state.camera_status_1 = f"Camera {camera_index} not found"
+        state.active_camera_1 = camera_index
         return None
 
     h, w = frame.shape[:2]
     channels = 1 if len(frame.shape) == 2 else frame.shape[2]
 
-    if channels not in (3, 4):
-        cap.release()
-        clear_camera_state(
-            state,
-            camera_index=camera_index,
-            status=f"Unsupported format from camera {camera_index}"
-        )
-        return None
+    if state.camera_texture_1 is not None:
+        delete_texture(state.camera_texture_1)
 
-    # Recreate camera texture cleanly
-    if state.camera_texture is not None:
-        delete_texture(state.camera_texture)
-
-    state.camera_texture = create_empty_texture(w, h, channels=channels)
-    update_texture_from_frame(state.camera_texture, frame)
-
-    state.camera_width = w
-    state.camera_height = h
-    state.camera_channels = channels
-    state.active_camera = camera_index
-    state.camera_status = f"Camera {camera_index} active"
-
+    state.camera_texture_1 = create_empty_texture(w, h, channels=channels)
+    update_texture_from_frame(state.camera_texture_1, frame)
+    state.camera_width_1 = w
+    state.camera_height_1 = h
+    state.camera_channels_1 = channels
+    state.active_camera_1 = camera_index
+    state.camera_status_1 = f"Camera {camera_index} active"
     return cap
 
+def open_camera_2(camera_index, state):
+    cap = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+    if not cap.isOpened():
+        cap = cv2.VideoCapture(camera_index)
+    if not cap.isOpened():
+        state.camera_texture_2 = None
+        state.camera_width_2 = 0
+        state.camera_height_2 = 0
+        state.camera_status_2 = f"Camera {camera_index} not found"
+        state.active_camera_2 = camera_index
+        return None
+
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, state.config.camera.resolutions["camera_2"]["width"])
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, state.config.camera.resolutions["camera_2"]["height"])
+    ret, frame = cap.read()
+    if not ret or frame is None:
+        cap.release()
+        state.camera_texture_2 = None
+        state.camera_width_2 = 0
+        state.camera_height_2 = 0
+        state.camera_status_2 = f"Camera {camera_index} not found"
+        state.active_camera_2 = camera_index
+        return None
+
+    h, w = frame.shape[:2]
+    channels = 1 if len(frame.shape) == 2 else frame.shape[2]
+
+    if state.camera_texture_2 is not None:
+        delete_texture(state.camera_texture_2)
+
+    state.camera_texture_2 = create_empty_texture(w, h, channels=channels)
+    update_texture_from_frame(state.camera_texture_2, frame)
+    state.camera_width_2 = w
+    state.camera_height_2 = h
+    state.camera_channels_2 = channels
+    state.active_camera_2 = camera_index
+    state.camera_status_2 = f"Camera {camera_index} active"
+    return cap
 
 def main():
     config = load_config()
@@ -128,7 +153,8 @@ def main():
 
     state = RoverState()
     state.config = config
-    state.requested_camera = config.camera.default_camera
+    state.requested_camera_1 = config.camera.assignments["camera_1"]
+    state.requested_camera_2 = config.camera.assignments["camera_2"]
 
     # Load E-stop textures once
     state.em_pressed_tex, state.em_pressed_w, state.em_pressed_h = load_texture_cv(
@@ -150,9 +176,12 @@ def main():
     )
 
     # Open initial camera
-    cap = open_camera(state.requested_camera, state)
-    if cap is None:
-        print(state.camera_status)
+    cap_1 = open_camera_1(state.requested_camera_1, state)
+    cap_2 = open_camera_2(state.requested_camera_2, state)
+    if cap_1 is not None:
+        print(state.camera_status_1)
+    if cap_2 is not None:
+        print(state.camera_status_2)
 
     while not glfw.window_should_close(window):
         glfw.poll_events()
@@ -161,9 +190,7 @@ def main():
 
         # keybinds
         handle_keybinds(window, state)
-
-
-                
+               
         if state.request_apply_settings:
             state.request_apply_settings = False
 
@@ -197,32 +224,52 @@ def main():
             if state.pending_camera_reconfigure:
                 state.pending_camera_reconfigure = False
 
-                if cap is not None:
-                    cap.release()
-                    cap = None
+                state.requested_camera_1 = state.config.camera.assignments["camera_1"]
+                state.requested_camera_2 = state.config.camera.assignments["camera_2"]
 
-                cap = open_camera(state.requested_camera, state)
+                if cap_1 is not None:
+                    cap_1.release()
+                    cap_1 = None
+                if cap_2 is not None:
+                    cap_2.release()
+                    cap_2 = None
 
-                if cap is not None:
-                    cap.set(cv2.CAP_PROP_FRAME_WIDTH, state.config.camera.width)
-                    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, state.config.camera.height)
+                cap_1 = open_camera_1(state.requested_camera_1, state)
+                cap_2 = open_camera_2(state.requested_camera_2, state)
 
-        # Camera switching
-        if state.requested_camera != state.active_camera:
-            if cap is not None:
-                cap.release()
-            cap = open_camera(state.requested_camera, state)
+        # switch camera 1 if needed
+        if state.requested_camera_1 != state.active_camera_1:
+            if cap_1 is not None:
+                cap_1.release()
+            cap_1 = open_camera_1(state.requested_camera_1, state)
 
-        # Update active camera feed
-        if cap is not None and state.camera_texture is not None:
-            ret, frame = cap.read()
+        # switch camera 2 if needed
+        if state.requested_camera_2 != state.active_camera_2:
+            if cap_2 is not None:
+                cap_2.release()
+            cap_2 = open_camera_2(state.requested_camera_2, state)
+
+        # update feed 1
+        if cap_1 is not None and state.camera_texture_1 is not None:
+            ret, frame = cap_1.read()
             if ret:
-                w, h, ch = update_texture_from_frame(state.camera_texture, frame)
-                state.camera_width = w
-                state.camera_height = h
-                state.camera_channels = ch
+                w, h, ch = update_texture_from_frame(state.camera_texture_1, frame)
+                state.camera_width_1 = w
+                state.camera_height_1 = h
+                state.camera_channels_1 = ch
             else:
-                state.camera_status = f"Lost feed from camera {state.active_camera}"
+                state.camera_status_1 = f"Lost feed from camera {state.active_camera_1}"
+
+        # update feed 2
+        if cap_2 is not None and state.camera_texture_2 is not None:
+            ret, frame = cap_2.read()
+            if ret:
+                w, h, ch = update_texture_from_frame(state.camera_texture_2, frame)
+                state.camera_width_2 = w
+                state.camera_height_2 = h
+                state.camera_channels_2 = ch
+            else:
+                state.camera_status_2 = f"Lost feed from camera {state.active_camera_2}"
 
         draw_layout(state)
 
@@ -244,10 +291,13 @@ def main():
 
     save_config(state.config)
 
-    if cap is not None:
-        cap.release()
+    if cap_1 is not None:
+        cap_1.release()
+    if cap_2 is not None:
+        cap_2.release()
 
-    delete_texture(state.camera_texture)
+    delete_texture(state.camera_texture_1)
+    delete_texture(state.camera_texture_2)
     delete_texture(state.em_pressed_tex)
     delete_texture(state.em_unpressed_tex)
 
