@@ -1,13 +1,16 @@
 --- FIX ---
 
 --- NOW ---
-write the config file and add the ability to change settings
 Hvordan forbinder vi til ROS2 netværket og hvor subcriber vi til de kamera vi skal bruge
 camera feed
 
 
 --- LATER ---
 design of presets for each operator
+multiple cams
+3D render of manipulator
+Waypoint system for the SLAM
+Projected minimap for navigation
 
 --- TASKS DONE ---
 ability to change cameras
