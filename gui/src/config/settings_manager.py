@@ -2,12 +2,13 @@ import copy
 import json
 from pathlib import Path
 import imgui
-from core.app_config import (
+from config.app_config import (
     AppConfig,
     WindowConfig,
     LayoutConfig,
     CameraConfig,
     KeybindsConfig,
+    SettingsmenuConfig
 )
 
 CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "config.json"
@@ -25,6 +26,7 @@ def load_config() -> AppConfig:
         layout=LayoutConfig(**raw.get("layout", {})),
         camera=CameraConfig(**raw.get("camera", {})),
         keybinds=KeybindsConfig(**raw.get("keybinds", {})),
+        settingsmenu=SettingsmenuConfig(**raw.get("settingsmenu", {}))
     )
 
 
@@ -74,9 +76,11 @@ def draw_settings_popup(state):
     cfg = state.edit_config
 
     imgui.text("Window")
+    imgui.push_item_width(cfg.settingsmenu.button_width)
     changed, cfg.window.width = imgui.input_int("Window Width", cfg.window.width)
     changed, cfg.window.height = imgui.input_int("Window Height", cfg.window.height)
     changed, cfg.window.fullscreen = imgui.checkbox("Fullscreen", cfg.window.fullscreen)
+    imgui.pop_item_width()
 
     imgui.separator()
     imgui.text("Panel Placement")
@@ -91,14 +95,14 @@ def draw_settings_popup(state):
     column_options = ["none", "0", "1"]
     row_options = ["none", "0", "1", "2", "3"]
 
-    def combo_from_options(label, current_value, options, width=100):
+    def combo_from_options(label, current_value, options):
         current_text = "none" if current_value is None else str(current_value)
 
         if current_text not in options:
             current_text = "none"
 
         current_index = options.index(current_text)
-        imgui.push_item_width(width)
+        imgui.push_item_width(cfg.settingsmenu.dropdown_width)
         changed, new_index = imgui.combo(label, current_index, options)
         imgui.pop_item_width()
 
@@ -128,6 +132,7 @@ def draw_settings_popup(state):
         )
     imgui.separator()
     imgui.text("Camera")
+    imgui.push_item_width(cfg.settingsmenu.button_width)
     changed, cfg.camera.default_camera = imgui.input_int("Default Camera", cfg.camera.default_camera)
     changed, cfg.camera.width = imgui.input_int("Camera Width", cfg.camera.width)
     changed, cfg.camera.height = imgui.input_int("Camera Height", cfg.camera.height)
@@ -139,6 +144,7 @@ def draw_settings_popup(state):
     changed, cfg.keybinds.camera_3 = imgui.input_text("Camera 3 Key", cfg.keybinds.camera_3, 16)
     changed, cfg.keybinds.shutdown_popup = imgui.input_text("Shutdown Popup Key", cfg.keybinds.shutdown_popup, 16)
     changed, cfg.keybinds.estop = imgui.input_text("E-stop Key", cfg.keybinds.estop, 16)
+    imgui.pop_item_width()
 
     imgui.separator()
 

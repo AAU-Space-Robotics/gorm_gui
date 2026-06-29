@@ -17,6 +17,11 @@ class WindowConfig:
     fullscreen: bool = True
 
 @dataclass
+class SettingsmenuConfig:
+    button_width:int = 100,
+    dropdown_width:int = 100
+
+@dataclass
 class LayoutConfig:
     # Old ratio-based layout fields (kept temporarily for compatibility)
     left_width_ratio: float = 0.80
@@ -48,3 +53,4 @@ class AppConfig:
     layout: LayoutConfig = field(default_factory=LayoutConfig)
     camera: CameraConfig = field(default_factory=CameraConfig)
     keybinds: KeybindsConfig = field(default_factory=KeybindsConfig)
+    settingsmenu: SettingsmenuConfig = field(default_factory=SettingsmenuConfig)

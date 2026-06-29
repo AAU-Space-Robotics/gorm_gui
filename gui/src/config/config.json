@@ -6,8 +6,8 @@
         "fullscreen": true
     },
     "layout": {
-        "left_width_ratio": 0.80,
-        "right_width_ratio": 0.20,
+        "left_width_ratio": 0.800000011920929,
+        "right_width_ratio": 0.19999998807907104,
         "estop_height_ratio": 0.3,
         "settings_height_ratio": 0.2,
         "telemetry_height_ratio": 0.3,
@@ -19,7 +19,7 @@
             },
             "estop": {
                 "row": 0,
-                "col": null
+                "col": 1
             },
             "settings": {
                 "row": 1,
