@@ -98,7 +98,6 @@ def update_texture_from_frame(texture_id, frame):
     if frame is None:
         raise ValueError("Frame is None")
 
-    frame = cv2.flip(frame, 1)
 
     height, width = frame.shape[:2]
 
