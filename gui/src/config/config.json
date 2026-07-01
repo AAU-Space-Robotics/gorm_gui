@@ -42,7 +42,7 @@
     "camera": {
         "assignments": {
             "camera_1": 0,
-            "camera_2": 0
+            "camera_2": 1
         },
         "resolutions": {
             "camera_1": {

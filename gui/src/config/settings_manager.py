@@ -97,6 +97,7 @@ def draw_settings_popup(state):
     column_options = ["none", "0", "1"]
     row_options = ["none", "0", "1", "2", "3"]
 
+    imgui.text("                      Column          Row")
     def combo_from_options(label, current_value, options):
         current_text = "none" if current_value is None else str(current_value)
 
