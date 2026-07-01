@@ -24,8 +24,8 @@ from cv_bridge import CvBridge
 BASE_DIR = Path(__file__).resolve().parent
 
 CAMERA_TOPICS = {
-    0: '/zed_front/zed/rgb/image_rect_color',
-    1: '/zed_back/zed/rgb/image_rect_color',
+    0: '/zed_back/zed_back/left_raw/image_raw_color',
+    1: '/zed_back/zed_back/right/image_rect_color',
     2: '/zed_manipulator/zed/rgb/image_rect_color',
 }
 
