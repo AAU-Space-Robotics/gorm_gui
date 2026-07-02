@@ -5,7 +5,7 @@ Hvordan forbinder vi til ROS2 netværket og hvor subcriber vi til de kamera vi s
 camera feed
 row height for specifikke panels
 trække i panels så de bliver breddere eller højere
-
+Add "parking lines" til kameraet så man kan se hvor hjulene kører
 
 --- LATER ---
 design of presets for each operator
