@@ -18,16 +18,20 @@ from core.input_handler import handle_keybinds
 
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
+
+from sensor_msgs.msg import Image, CompressedImage
 from cv_bridge import CvBridge
+import numpy as np
+
 
 BASE_DIR = Path(__file__).resolve().parent
 
 CAMERA_TOPICS = {
-    0: '/zed_front/zed_front/right/image_rect_color',
-    1: '/zed_back/zed_back/right/image_rect_color',
-    2: '/zed_manipulator/zed/rgb/image_rect_color',
+    0: '/zed_front/zed_front/rgb/image_rect_color/compressed',
+    1: '/zed_back/zed_back/rgb/image_rect_color/compressed',
+    2: '/event_camera1/image_raw',
 }
+
 
 frame_lock = threading.Lock()
 latest_frames = {1: None, 2: None}      # slot -> frame
@@ -46,14 +50,15 @@ class DualCameraSubscriber(Node):
 
     def __init__(self, topic_1, topic_2):
         super().__init__('gui_camera_subscriber')
+
         self.bridge = CvBridge()
+
         self.current_topics = {1: None, 2: None}
         self.subscriptions_map = {1: None, 2: None}
 
         self._switch_lock = threading.Lock()
-        self._pending_switch = {1: None, 2: None}  # slot -> new_topic (or "UNSET")
+        self._pending_switch = {1: None, 2: None}
 
-        # Processes switch requests safely on this node's own thread
         self.create_timer(0.05, self._process_pending_switches)
 
         self._subscribe(1, topic_1)
@@ -63,24 +68,62 @@ class DualCameraSubscriber(Node):
         if topic is None:
             self.current_topics[slot] = None
             return
-        sub = self.create_subscription(
-            Image, topic, lambda msg, s=slot: self._image_callback(s, msg), 10
-        )
+
+        topic_types = dict(self.get_topic_names_and_types())
+
+        if topic not in topic_types:
+            self.get_logger().warn(
+                f"Topic {topic} not found"
+            )
+            return
+
+        msg_type = topic_types[topic][0]
+
+        if msg_type == "sensor_msgs/msg/Image":
+
+            sub = self.create_subscription(
+                Image,
+                topic,
+                lambda msg, s=slot: self._raw_callback(s, msg),
+                10
+            )
+
+        elif msg_type == "sensor_msgs/msg/CompressedImage":
+
+            sub = self.create_subscription(
+                CompressedImage,
+                topic,
+                lambda msg, s=slot: self._compressed_callback(s, msg),
+                10
+            )
+
+        else:
+            self.get_logger().error(
+                f"Unsupported topic type: {msg_type}"
+            )
+            return
+
         self.subscriptions_map[slot] = sub
         self.current_topics[slot] = topic
-        self.get_logger().info(f'Slot {slot} subscribed to {topic}')
+
+        self.get_logger().info(
+            f"Slot {slot} subscribed to {topic} ({msg_type})"
+        )
 
     def _unsubscribe(self, slot):
         sub = self.subscriptions_map.get(slot)
+
         if sub is not None:
             self.destroy_subscription(sub)
             self.subscriptions_map[slot] = None
+
         self.current_topics[slot] = None
 
     def request_switch(self, slot, new_topic):
-        """Thread-safe entry point: call from the GLFW/main thread."""
         with self._switch_lock:
-            self._pending_switch[slot] = new_topic if new_topic is not None else "UNSET"
+            self._pending_switch[slot] = (
+                new_topic if new_topic is not None else "UNSET"
+            )
 
     def _process_pending_switches(self):
         with self._switch_lock:
@@ -88,23 +131,66 @@ class DualCameraSubscriber(Node):
             self._pending_switch = {1: None, 2: None}
 
         for slot, requested in pending.items():
+
             if requested is None:
                 continue
+
             new_topic = None if requested == "UNSET" else requested
+
             if new_topic == self.current_topics.get(slot):
                 continue
+
             self._unsubscribe(slot)
+
             with frame_lock:
                 latest_frames[slot] = None
                 new_frame_flags[slot] = False
+
             if new_topic is not None:
                 self._subscribe(slot, new_topic)
 
-    def _image_callback(self, slot, msg):
-        frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        with frame_lock:
-            latest_frames[slot] = frame
-            new_frame_flags[slot] = True
+    def _raw_callback(self, slot, msg):
+        try:
+            frame = self.bridge.imgmsg_to_cv2(
+                msg,
+                desired_encoding='bgr8'
+            )
+
+            with frame_lock:
+                latest_frames[slot] = frame
+                new_frame_flags[slot] = True
+
+        except Exception as e:
+            self.get_logger().error(
+                f"Raw image error on slot {slot}: {e}"
+            )
+
+    def _compressed_callback(self, slot, msg):
+        try:
+            np_arr = np.frombuffer(
+                msg.data,
+                dtype=np.uint8
+            )
+
+            frame = cv2.imdecode(
+                np_arr,
+                cv2.IMREAD_COLOR
+            )
+
+            if frame is None:
+                self.get_logger().warn(
+                    f"Failed to decode compressed image on slot {slot}"
+                )
+                return
+
+            with frame_lock:
+                latest_frames[slot] = frame
+                new_frame_flags[slot] = True
+
+        except Exception as e:
+            self.get_logger().error(
+                f"Compressed image error on slot {slot}: {e}"
+            )
 
 
 def ros2_thread(topic_1, topic_2):
